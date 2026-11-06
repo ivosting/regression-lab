@@ -26,4 +26,12 @@ class OrderControllerTest {
                 .andExpect(jsonPath("$.length()").value(20))
                 .andExpect(jsonPath("$[0].customerName").isNotEmpty());
     }
+
+    @Test
+    void ordersCanBeFilteredByStatus() throws Exception {
+        mvc.perform(get("/orders").param("status", "paid"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(5))
+                .andExpect(jsonPath("$[*].status").value(org.hamcrest.Matchers.everyItem(org.hamcrest.Matchers.is("PAID"))));
+    }
 }
