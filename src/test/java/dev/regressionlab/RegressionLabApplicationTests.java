@@ -21,6 +21,9 @@ class RegressionLabApplicationTests {
     void listsTwentyOrdersWithCustomerNames() {
         List<Order> orders = service.listRecentOrders();
         assertThat(orders).hasSize(20);
-        assertThat(orders).allSatisfy(o -> assertThat(o.customerName()).isNotBlank());
+        assertThat(orders).allSatisfy(o -> {
+            assertThat(o.customerName()).isNotBlank();
+            assertThat(o.loyaltyTier()).isIn("BRONZE", "SILVER", "GOLD");
+        });
     }
 }

@@ -37,6 +37,17 @@ public class CustomerRepository {
         return nameOf(id);
     }
 
+    /** Full customer profile (name + loyalty tier) for one customer (~35 ms). */
+    public CustomerProfile findProfileById(long id) {
+        latency.query(35);
+        return new CustomerProfile(id, nameOf(id), TIERS[(int) (id % TIERS.length)]);
+    }
+
+    public record CustomerProfile(long id, String name, String loyaltyTier) {
+    }
+
+    private static final String[] TIERS = {"BRONZE", "SILVER", "GOLD"};
+
     private static String nameOf(long id) {
         return NAMES[(int) (id % NAMES.length)];
     }
