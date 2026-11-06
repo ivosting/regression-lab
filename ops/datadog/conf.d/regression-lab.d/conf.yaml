@@ -1,0 +1,7 @@
+# Datadog Agent custom log collection: tails the JSON log file written by the app.
+logs:
+  - type: file
+    path: /lab-logs/regression-lab.json
+    service: regression-lab
+    source: java
+    start_position: beginning
