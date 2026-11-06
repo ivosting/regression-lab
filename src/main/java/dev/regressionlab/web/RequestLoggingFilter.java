@@ -36,6 +36,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String requestId = headerOrRandom(request.getHeader("X-Request-Id"));
         response.setHeader("X-Request-Id", requestId);
+        response.setHeader("Cache-Control", "no-store");
+        response.setHeader("X-Content-Type-Options", "nosniff");
         MDC.put("request_id", requestId);
         long start = System.nanoTime();
         try {
@@ -47,11 +49,19 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
                     .addKeyValue("http.method", request.getMethod())
                     .addKeyValue("http.url_details.path", request.getRequestURI())
                     .addKeyValue("http.status_code", response.getStatus())
+                    .addKeyValue("http.useragent", truncate(request.getHeader("User-Agent")))
                     .addKeyValue("duration", nanos)
                     .addKeyValue("duration_ms", millis)
                     .log("{} {} -> {} in {} ms", request.getMethod(), request.getRequestURI(), response.getStatus(), millis);
             MDC.remove("request_id");
         }
+    }
+
+    private static String truncate(String value) {
+        if (value == null) {
+            return "-";
+        }
+        return value.length() > 200 ? value.substring(0, 200) : value;
     }
 
     private static String headerOrRandom(String value) {
