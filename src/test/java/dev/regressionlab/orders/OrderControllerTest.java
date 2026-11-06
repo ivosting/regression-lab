@@ -23,6 +23,7 @@ class OrderControllerTest {
         mvc.perform(get("/orders").header("X-Request-Id", "test-123"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("X-Request-Id", "test-123"))
+                .andExpect(header().string("Cache-Control", "no-store"))
                 .andExpect(jsonPath("$.length()").value(20))
                 .andExpect(jsonPath("$[0].customerName").isNotEmpty());
     }
